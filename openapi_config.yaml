@@ -1,0 +1,8 @@
+output:
+  ./internal/server/openapi_server.gen.go
+package: server
+generate:
+  - chi-server
+  - types
+import-mapping:
+  ./types.yaml: my-app/pkg/model/generated/v1

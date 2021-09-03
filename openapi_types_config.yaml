@@ -1,0 +1,6 @@
+output:
+  ./pkg/model/generated/v1/openapi_types.gen.go
+package: server
+generate:
+  - types
+
