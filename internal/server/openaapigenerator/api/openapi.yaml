@@ -1,0 +1,200 @@
+openapi: 3.0.0
+info:
+  description: OpenApi specification for a todo application
+  title: Todo app OAS
+  version: 1.0.0
+servers:
+- url: http://localhost:32208/
+paths:
+  /todos:
+    get:
+      description: Returns all the todo's of the user
+      operationId: getTodos
+      parameters:
+      - description: ID of the user
+        explode: true
+        in: query
+        name: user
+        required: true
+        schema:
+          format: uuid
+          type: string
+        style: form
+      - description: filter todo's by status
+        explode: true
+        in: query
+        name: status
+        required: false
+        schema:
+          enum:
+          - on_hold
+          - working
+          - done
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/Todo'
+                type: array
+          description: get todo's response
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: unexpected Error
+    post:
+      description: Creates a new todo
+      operationId: createTodo
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Todo'
+        description: Todo to add
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Todo'
+          description: Todo creation response
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: unexpected error
+  /todos/{todoId}:
+    delete:
+      description: delete a todo
+      operationId: deleteTodo
+      parameters:
+      - description: Id of the todo
+        explode: false
+        in: path
+        name: todoId
+        required: true
+        schema:
+          format: int32
+          type: integer
+        style: simple
+      responses:
+        "204":
+          description: no content
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: unexpected error
+    put:
+      description: Updates the status of a todo
+      operationId: updateTodo
+      parameters:
+      - description: Id of the todo
+        explode: false
+        in: path
+        name: todoId
+        required: true
+        schema:
+          format: int32
+          type: integer
+        style: simple
+      requestBody:
+        $ref: '#/components/requestBodies/inline_object'
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              properties:
+                task:
+                  type: string
+                status:
+                  enum:
+                  - on_hold
+                  - working
+                  - done
+                  type: string
+              type: object
+        description: status of the todo
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Todo'
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: unexpected error
+components:
+  requestBodies:
+    inline_object:
+      content:
+        application/x-www-form-urlencoded:
+          schema:
+            $ref: '#/components/schemas/inline_object'
+  schemas:
+    Todo:
+      example:
+        completed_at: 2000-01-23T04:56:07.000+00:00
+        task: task
+        created_at: 2000-01-23T04:56:07.000+00:00
+        id: 0
+        user: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+        status: on_hold
+      properties:
+        id:
+          format: int32
+          type: integer
+        user:
+          format: uuid
+          type: string
+        task:
+          type: string
+        status:
+          enum:
+          - on_hold
+          - working
+          - done
+          type: string
+        created_at:
+          format: date-time
+          type: string
+        completed_at:
+          format: date-time
+          type: string
+      required:
+      - status
+      - task
+      - user
+      type: object
+    Error:
+      properties:
+        code:
+          format: int32
+          type: integer
+        message:
+          type: string
+      required:
+      - code
+      - message
+      type: object
+    inline_object:
+      properties:
+        task:
+          type: string
+        status:
+          enum:
+          - on_hold
+          - working
+          - done
+          type: string
+      type: object

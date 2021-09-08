@@ -138,18 +138,19 @@ paths:
                     - on_hold
                     - working
                     - done
-        responses:
-          '200':
-            content:
-              application/json:
-                schema:
-                  $ref: '#/components/schemas/Todo'
-          default:
-            description: unexpected error
-            content:
-              application/json:
-                schema:
-                  $ref: '#/components/schemas/Error'
+      responses:
+        '200':
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Todo'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
     delete:
       description: delete a todo
       operationId: deleteTodo
